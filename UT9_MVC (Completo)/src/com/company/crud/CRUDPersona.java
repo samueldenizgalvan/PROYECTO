@@ -1,6 +1,6 @@
 package com.company.crud;
 
-import com.company.model.Genero;
+import com.company.model.Sexo;
 import com.company.model.Persona;
 import com.company.database.ConectionBD;
 
@@ -35,7 +35,6 @@ public class CRUDPersona {
                 Persona persona = getPersona(resultSet);
                 personas.add(persona);
             }
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,7 +48,6 @@ public class CRUDPersona {
         try(PreparedStatement preparedStatement = connection.getConnection().prepareStatement(consulta)){
             try(ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    statement.close();
                     return getPersona(resultSet);
                 }
             }
@@ -106,7 +104,6 @@ public class CRUDPersona {
                     persona.setId(resultSet.getInt(1));
                 }
             }
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -118,7 +115,6 @@ public class CRUDPersona {
     public void eliminarPersonaPorID(int id){
         try(PreparedStatement preparedStatement = connection.getConnection().prepareStatement("DELETE FROM persona WHERE id = '" + id + "'")){
             preparedStatement.executeUpdate();
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -127,7 +123,6 @@ public class CRUDPersona {
     public void eliminarPersonaPorNIF(String nif){
         try(PreparedStatement preparedStatement = connection.getConnection().prepareStatement("DELETE FROM persona WHERE nif = '" + nif + "'")){
             preparedStatement.executeUpdate();
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -163,14 +158,14 @@ public class CRUDPersona {
         String genero = resultSet.getString("sexo");
         String tipo = resultSet.getString("tipo");
 
-        Genero generoEnum = Genero.MASCULINO;
-        if (genero.equalsIgnoreCase("M")){
-            generoEnum = Genero.FEMENINO;
+        Sexo sexoEnum = Sexo.MASCULINO;
+        if (genero.equalsIgnoreCase("F")){
+            sexoEnum = Sexo.FEMENINO;
         }
         //Fecha Formaato 2020-12-12
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate fechaNacimientoLocalDate = LocalDate.parse(fechaNacimiento,dateTimeFormatter);
-        Persona persona = new Persona(nif,nombre,apellidoPaterno,apellidoMaterno,ciudad,direccion,telefono,fechaNacimientoLocalDate,generoEnum,tipo);
+        Persona persona = new Persona(nif,nombre,apellidoPaterno,apellidoMaterno,ciudad,direccion,telefono,fechaNacimientoLocalDate, sexoEnum,tipo);
         persona.setId(id);
         return persona;
     }

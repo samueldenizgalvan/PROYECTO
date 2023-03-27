@@ -13,10 +13,10 @@ public class Persona {
     private String direccion;
     private String telefono;
     private LocalDate fechaNacimiento;
-    private Genero genero;
+    private Sexo sexo;
     private String tipo;
 
-public Persona(String NIF, String nombre, String apellidoPaterno, String apellidoMaterno, String ciudad, String direccion, String telefono, LocalDate fechaNacimiento, Genero genero, String tipo) {
+public Persona(String NIF, String nombre, String apellidoPaterno, String apellidoMaterno, String ciudad, String direccion, String telefono, LocalDate fechaNacimiento, Sexo sexo, String tipo) {
         this.NIF = NIF;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
@@ -25,7 +25,7 @@ public Persona(String NIF, String nombre, String apellidoPaterno, String apellid
         this.direccion = direccion;
         this.telefono = telefono;
         this.fechaNacimiento = fechaNacimiento;
-        this.genero = genero;
+        this.sexo = sexo;
         this.tipo = tipo;
     }
 
@@ -97,12 +97,12 @@ public Persona(String NIF, String nombre, String apellidoPaterno, String apellid
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public Genero getGenero() {
-        return genero;
+    public Sexo getGenero() {
+        return sexo;
     }
 
-    public void setGenero(Genero genero) {
-        this.genero = genero;
+    public void setGenero(Sexo sexo) {
+        this.sexo = sexo;
     }
 
     public String getTipo() {

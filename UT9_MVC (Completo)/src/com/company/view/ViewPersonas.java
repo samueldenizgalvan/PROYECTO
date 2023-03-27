@@ -3,13 +3,14 @@ package com.company.view;
 import com.company.controladores.ControladorPanelPersonas;
 import com.company.crud.QueryPossibilities;
 import com.company.database.ConectionBD;
+import com.company.model.Persona;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ViewPersonas extends JFrame {
 
@@ -22,16 +23,16 @@ public class ViewPersonas extends JFrame {
 
 
     private JTextField busquedaPorID; //
-    private JButton btnGuardar; //
+    private JButton btnEditar; //
     private JButton btnEliminar;
     private JPanel panelEntrada;
     private JButton btnNuevo;
     private JTable tablaDatos;
-    private JTextField busquedaPorNif;
     private JButton button3;
+    private JComboBox comboBox1;
 
     private int row;
-    private String nif;
+    private String id;
 
 
     public ViewPersonas(ConectionBD conectionBD, MenuPrincipalView menuPrincipalView) {
@@ -39,15 +40,15 @@ public class ViewPersonas extends JFrame {
         this.conectionBD = conectionBD;
         this.controlador = new ControladorPanelPersonas(conectionBD);
         this.menuPrincipalView = menuPrincipalView;
+        loadComboBox();
         btnEliminar.setEnabled(false);
         setContentPane(panelEntrada);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int halfScreenWidth = screenSize.width / 2;
-        setSize(halfScreenWidth, screenSize.height);
+        setSize(1500,500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        btnEditar.addActionListener(this::btnEditarActionPerformed);
+        btnEditar.setText("Editar");
         btnNuevo.addActionListener(this::btnNuevoActionPerformed);
-        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
         btnEliminar.addActionListener(this::btnEliminarActionPerformed);
         tablaDatos.setModel(controlador.cargarDatos(defaultTableModel));
         tablaDatos.addMouseListener(new MouseAdapter() {
@@ -63,23 +64,36 @@ public class ViewPersonas extends JFrame {
             }
         });
     }
+    private void btnEditarActionPerformed(ActionEvent e) {
+        if (id.isBlank() || id == null) {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado ninguna persona");
+            return;
+        }
+
+        Optional<Persona> persona = controlador.buscarPorId(Integer.parseInt(id));
+
+        if (persona.isEmpty()){
+            JOptionPane.showMessageDialog(null, "No se ha encontrado la persona");
+            return;
+        }
+
+        FichaPersona fichaPersona = new FichaPersona(this, true, conectionBD, controlador, "Editar Cliente",persona.get());
+        fichaPersona.setVisible(true);
+    }
 
 
     private void btnNuevoActionPerformed(ActionEvent e) {
-        //TODO: Generar nueva ventana para añadir personas
-    }
-
-    private void btnGuardarActionPerformed(ActionEvent e) {
-
+        FichaPersona fichaPersona = new FichaPersona(this, true, conectionBD, controlador, "Nuevo Cliente");
+        fichaPersona.setVisible(true);
     }
 
     private void btnEliminarActionPerformed(ActionEvent e) {
-        if (nif.isBlank() || nif == null) {
+        if (id.isBlank() || id == null) {
             JOptionPane.showMessageDialog(null, "No se ha seleccionado ninguna persona");
             return;
         }
             if (JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea eliminar a la persona seleccionada?", "Eliminar persona", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-                controlador.eliminarPersona(nif);
+                controlador.eliminarPersonaPorId(Integer.parseInt(id));
                 tablaDatos.setModel(controlador.cargarDatos(defaultTableModel));
                 btnEliminar.setEnabled(false);
             }
@@ -88,8 +102,7 @@ public class ViewPersonas extends JFrame {
 
     private void addMouseClickedEventTable(MouseEvent e){
         row = tablaDatos.rowAtPoint(e.getPoint());
-        nif = tablaDatos.getValueAt(row, 0).toString();
-
+        id = tablaDatos.getValueAt(row, 0).toString();
         btnEliminar.setEnabled(true);
     }
 
@@ -104,17 +117,27 @@ public class ViewPersonas extends JFrame {
             tablaDatos.setModel(controlador.cargarDatos(defaultTableModel));
             return;
         }
-        QueryPossibilities queryPossibilities = posibilidadesBusqueda.get("NIF");
+
+        String selectedItem = comboBox1.getSelectedItem().toString();
+
+        if (selectedItem.isBlank() || selectedItem == null) {
+            tablaDatos.setModel(controlador.cargarDatos(defaultTableModel));
+            return;
+        }
+
+        QueryPossibilities queryPossibilities = posibilidadesBusqueda.get(selectedItem);
         tablaDatos.setModel(controlador.cargarDatosPorCaracteristicas(defaultTableModel, queryPossibilities, texto));
     }
 
     private void loadComboBox() {
-
         for (QueryPossibilities queryPossibilities : QueryPossibilities.values()) {
-            posibilidadesBusqueda.put(queryPossibilities.getNombreEnum(), queryPossibilities);
-            //TODO: Añadir al comboBox las posibilidades de búsqueda de la base de datos y crear el comboBox
+            posibilidadesBusqueda.put(queryPossibilities.getNombre(), queryPossibilities);
+            comboBox1.addItem(queryPossibilities.getNombre());
         }
 
     }
 
+    public void cargarDatos(){
+        tablaDatos.setModel(controlador.cargarDatos(defaultTableModel));
+    }
 }

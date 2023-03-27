@@ -1,14 +1,14 @@
 package com.company.model;
 
-public enum Genero
+public enum Sexo
 {
 
     MASCULINO("Masculino"),
-    FEMENINO("Feminino");
+    FEMENINO("Femenino");
 
     private String descripcion;
 
-    Genero(String descripcion)
+    Sexo(String descripcion)
     {
         this.descripcion = descripcion;
     }

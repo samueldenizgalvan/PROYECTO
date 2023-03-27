@@ -21,17 +21,6 @@ public class Asignatura{
         this.id_grado = idGrado;
     }
 
-    public void Asignatura(int id, String nombre, String creditos, String tipo, String curso, String cuatrimestre, String id_profesor, String id_grado) {
-        this.id = id;
-        this.nombre = nombre;
-        this.creditos = creditos;
-        this.tipo = tipo;
-        this.curso = curso;
-        this.cuatrimestre = cuatrimestre;
-        this.id_profesor = id_profesor;
-        this.id_grado = id_grado;
-    }
-
     public int getId() {
         return id;
     }
